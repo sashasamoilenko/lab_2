@@ -36,12 +36,12 @@ public:
 
     Lint operator+(Lint other) {
         Lint res;
-        int carry = 0;
+        int d = 0;
 
         int max_len = digits.size() > other.digits.size() ? digits.size() : other.digits.size();
 
         for (int i = 0; i < max_len; ++i) {
-            int d = 0;
+
             if (i < digits.size()) {
                 d += digits[i];
             }
@@ -50,12 +50,12 @@ public:
                 d += other.digits[i];
             }
 
-            res.digits.push_back((d + carry) % 10);
-            carry = (d + carry) / 10;
+            res.digits.push_back(d % 10);
+            d = d / 10;
         }
 
-        if (carry > 0){
-            res.digits.push_back(carry);
+        if (d > 0){
+           res.digits.push_back(d);
         }
         return res;
     }
@@ -75,7 +75,7 @@ public:
     }
 };
 int main() {
-    Lint a("133"), b("1928"), c, d, e;
+    Lint a("133"), b("928"), c, d, e;
     a.print();
     c = a+b;
     c.print();
