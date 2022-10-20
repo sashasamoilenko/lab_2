@@ -73,12 +73,22 @@ public:
           return other;
 //        multer->multiply();
     }
+    friend ostream& operator<<(ostream &stream, Lint x);
 };
+
+ostream& operator<<(ostream &stream, Lint x) {
+    for (int i = x.digits.size()-1; i >= 0; --i){
+        stream << x.digits[i];
+    }
+    stream << endl;
+    return stream;
+}
 int main() {
-    Lint a("133"), b("928"), c, d, e;
+    Lint a("139745068323"), b("928278378357863345549598489723098"), c, d, e;
     a.print();
     c = a+b;
     c.print();
+    cout << c << endl;
 //    b = "19";
 //    std::cin >> c;
 
