@@ -1,45 +1,69 @@
 #include <iostream>
+#include <vector>
+using namespace std;
+//class Multer {
+//public:
+//    virtual void multiply() = 0;
+//};
 
-class Multer {
-public:
-    virtual void multiply() = 0;
-};
-
-class Karatsuba : public Multer {
-public:
-     void multiply() {
+//class Karatsuba : public Multer {
+//public:
+//     void multiply() {
          //...
-     }
-};
+//     }
+//};
 
-class Strassen : public Multer {
-public:
-    void multiply() {
+//class Strassen : public Multer {
+//public:
+//    void multiply() {
         //...
-    }
-};
+//    }
+//};
 
 class Lint {
 private:
-    static Multer *multer;
+    vector<int> digits;
+//    static Multer *multer;
 public:
-    static void setMultMode(Multer *newMulter) {
-       multer = newMulter;
+    Lint() {
     }
 
+    Lint(string digits_str) {
+        for(int i = 0; i < digits_str.size(); ++i){
+            digits.push_back(digits_str[i] - '0');
+        }
+    }
+//    static void setMultMode(Multer *newMulter) {
+//       multer = newMulter;
+//    }
+
+    void print() {
+        for (int i = 0; i < digits.size(); ++i) {
+            cout << digits[i];
+        }
+        cout << endl;
+    }
     Lint operator* (Lint other) {
-        multer->multiply();
+          return other;
+//        multer->multiply();
     }
 };
 int main() {
-    Lint a = "837173432094389813435565409985", b, c, d, e;
-    b = "19";
-    std::cin >> c;
+    Lint a("83717"), b, c, d, e;
+    a.print();
+//    b = "19";
+//    std::cin >> c;
 
-    Lint::setMultMode(new Karatsuba());
+//    Lint test;
+//    test.test();
 
-    std::cout << a * (b + c) << std::endl;
+//    Lint *pTest = new Lint();
+//    pTest->test();
+
+//    Lint::setMultMode(new Karatsuba());
+
+//    std::cout << a * (b + c) << std::endl;
 
     return 0;
 
-};
+}
