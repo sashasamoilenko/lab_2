@@ -34,6 +34,40 @@ public:
         }
     }
 
+    Lint operator-(Lint other) {
+        Lint res;
+        int d = 0;
+        int m = 0;
+
+        int max_len = digits.size() > other.digits.size() ? digits.size() : other.digits.size();
+
+        if (max_len == digits.size() && max_len == other.digits.size() && digits[max_len - 1] == other.digits[max_len - 1]) {
+            max_len -= 1;
+        }
+
+        for (int i = 0; i < max_len; ++i) {
+
+            if (i < digits.size()) {
+                d = digits[i]-m;
+                m = 0;
+            }
+
+            if (i < other.digits.size()) {
+                d -= other.digits[i];
+            }
+
+            if (d < 0) {
+                d += 10;
+                m = 1;
+            }
+
+            cout << d << endl;
+            res.digits.push_back(d);
+        }
+
+        return res;
+    }
+
     Lint operator+(Lint other) {
         Lint res;
         int d = 0;
@@ -84,9 +118,9 @@ ostream& operator<<(ostream &stream, Lint x) {
     return stream;
 }
 int main() {
-    Lint a("139745068323"), b("928278378357863345549598489723098"), c, d, e;
+    Lint a("977676"), b("993877"), c, d, e;
     a.print();
-    c = a+b;
+    c = a-b;
     c.print();
     cout << c << endl;
 //    b = "19";
