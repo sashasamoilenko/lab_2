@@ -34,6 +34,30 @@ public:
         }
     }
 
+    Lint operator*(Lint other) {
+        Lint res;
+        int d = 0, carry1 = 0, carry2 = 0, c = 0;
+
+        int max_len = digits.size() > other.digits.size() ? digits.size() : other.digits.size();
+        vector<int>inter (2 * max_len);
+            for (int i = 0; i < digits.size(); ++i){
+                for (int j = 0; j < other.digits.size(); ++j){
+                    inter[i + j] += digits[i] * other.digits [j];
+                }
+            }
+
+            for (int i = 0; i < 2 * max_len; ++i) {
+                c = inter[i] + carry1 + 10 * carry2;
+                d = c % 10;
+                carry1 = (c / 10) % 10;
+                carry2 = c / 100;
+                res.digits.push_back(d);
+            }
+
+        return res;
+
+    }
+
     Lint operator-(Lint other) {
         Lint res;
         int d = 0;
@@ -103,10 +127,7 @@ public:
         }
         cout << endl;
     }
-    Lint operator* (Lint other) {
-          return other;
-//        multer->multiply();
-    }
+
     friend ostream& operator<<(ostream &stream, Lint x);
 };
 
@@ -118,9 +139,9 @@ ostream& operator<<(ostream &stream, Lint x) {
     return stream;
 }
 int main() {
-    Lint a("977676"), b("993877"), c, d, e;
+    Lint a("91986657456454766987878878777"), b("9547656786987897"), c, d, e;
     a.print();
-    c = a-b;
+    c = a*b;
     c.print();
     cout << c << endl;
 //    b = "19";
