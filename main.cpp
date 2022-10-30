@@ -65,9 +65,9 @@ public:
 
         int max_len = digits.size() > other.digits.size() ? digits.size() : other.digits.size();
 
-        if (max_len == digits.size() && max_len == other.digits.size() && digits[max_len - 1] == other.digits[max_len - 1]) {
-            max_len -= 1;
-        }
+        //if (max_len == digits.size() && max_len == other.digits.size() && digits[max_len - 1] == other.digits[max_len - 1]) {
+         //   max_len -= 1;
+        //}
 
         for (int i = 0; i < max_len; ++i) {
 
@@ -132,14 +132,21 @@ public:
 };
 
 ostream& operator<<(ostream &stream, Lint x) {
-    for (int i = x.digits.size()-1; i >= 0; --i){
+    int counter = 0;
+    int i = x.digits.size()-1;
+    while (x.digits[i] == 0) {
+        counter += 1;
+        i -= 1;
+    }
+
+    for (int i = x.digits.size()-1-counter; i >= 0; --i){
         stream << x.digits[i];
     }
     stream << endl;
     return stream;
 }
 int main() {
-    Lint a("91986657456454766987878878777"), b("9547656786987897"), c, d, e;
+    Lint a("9900"), b("99"), c, d, e;
     a.print();
     c = a*b;
     c.print();
