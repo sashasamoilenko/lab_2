@@ -1,17 +1,13 @@
 #include <iostream>
 #include <vector>
+#include <math.h>
 using namespace std;
-//class Multer {
-//public:
-//    virtual void multiply() = 0;
-//};
+class Multer {
+public:
+   virtual void multiply() = 0;
+};
 
-//class Karatsuba : public Multer {
-//public:
-//     void multiply() {
-         //...
-//     }
-//};
+
 
 //class Strassen : public Multer {
 //public:
@@ -23,7 +19,7 @@ using namespace std;
 class Lint {
 private:
     vector<int> digits;
-//    static Multer *multer;
+   //static Multer *multer;
 public:
     Lint() {
     }
@@ -85,7 +81,7 @@ public:
                 m = 1;
             }
 
-            cout << d << endl;
+            //cout << d << endl;
             res.digits.push_back(d);
         }
 
@@ -129,7 +125,78 @@ public:
     }
 
     friend ostream& operator<<(ostream &stream, Lint x);
+    friend Lint Karat_mult (Lint a, Lint b);
+//    friend Karatsuba::Lint();
 };
+
+Lint Karat_mult (Lint a, Lint b) {
+    Lint res, a_beg, a_end, b_beg, b_end, ten_2div, ten_div;
+    int c = 0;
+    int max_len = a.digits.size() > b.digits.size() ? a.digits.size() : b.digits.size();
+
+    if (max_len <= 10){
+        return a * b;
+    }
+
+    c = a.digits.size() - b.digits.size();
+
+   // if (max_len % 2 == 0 && c > 0){
+    //    for (int i = max_len - 1; i > max_len - 1 - c; --i){
+    //        b.digits[i] = 0;
+    //    }
+    //    }
+    //else if (max_len % 2 == 0 && c < 0) {
+   //     for (int i = max_len - 1; i > max_len - 1 - c; --i){
+    //        a.digits[i] = 0;
+    //    }
+    //}
+
+    //if (max_len % 2 != 0 && c > 0){
+    //    a.digits[max_len] = 0;
+    //    for (int i = max_len; i > max_len - c; --i){
+    //        b.digits[i] = 0;
+    //    }
+    //}
+    //else if (max_len % 2 != 0 && c < 0) {
+    //    b.digits[max_len] = 0;
+    //    for (int i = max_len; i > max_len - c; --i){
+    //        a.digits[i] = 0;
+    //    }
+   // }
+    //else if (max_len % 2 != 0 && c == 0) {
+    //    b.digits[max_len] = 0;
+    //    a.digits[max_len] = 0;
+    //}
+
+    int div = a.digits.size() / 2;
+
+    for (int i = 0; i < div; ++i) {
+        a_beg.digits.push_back(a.digits[i+div]);
+        //cout << a.digits[i+div] << endl;
+        a_end.digits.push_back(a.digits[i]);
+        //cout << a.digits[i] << endl;
+        b_beg.digits.push_back(b.digits[i+div]);
+        b_end.digits.push_back(b.digits[i]);
+    }
+
+    Lint prod1 = Karat_mult (a_beg, b_beg);
+    Lint prod2 = Karat_mult (a_end, b_end);
+    Lint prod3 = Karat_mult (a_beg + a_end, b_beg + b_end) - prod1 - prod2;
+
+    for (int i = 0; i < 2 * div-1; ++i) {
+        ten_2div.digits.push_back(0);
+    }
+    ten_2div.digits.push_back(1);
+
+    for (int i = 0; i < div-1; ++i) {
+        ten_div.digits.push_back(0);
+    }
+    ten_div.digits.push_back(1);
+
+    res = prod1 * ten_2div + prod3 * ten_div + prod2;
+
+    return res;
+}
 
 ostream& operator<<(ostream &stream, Lint x) {
     int counter = 0;
@@ -145,11 +212,25 @@ ostream& operator<<(ostream &stream, Lint x) {
     stream << endl;
     return stream;
 }
+
+//class Karatsuba : public Multer {
+//private:
+
+//public:
+//    vector<int> digits;
+//    Lint multiply(digits(), other.digits) {
+//        int max_len = digits.size() > b.size() ? digits.size() : other.digits.size();
+//        if (a.size() <= 10 && b.size() <= 10){
+//            return a*b;
+//        }
+//    }
+//};
+
 int main() {
-    Lint a("9900"), b("99"), c, d, e;
-    a.print();
-    c = a*b;
-    c.print();
+    Lint a("12345678989761"), b("12300000000000"), c, d, e;
+    //a.print();
+    c = Karat_mult(a,b);
+    //c.print();
     cout << c << endl;
 //    b = "19";
 //    std::cin >> c;
