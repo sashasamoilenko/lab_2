@@ -18,9 +18,10 @@ public:
 
 class Lint {
 private:
-    vector<int> digits;
-   //static Multer *multer;
+
+    static Multer *multer;
 public:
+    vector<int> digits;
     Lint() {
     }
 
@@ -60,32 +61,37 @@ public:
         int m = 0;
 
         int max_len = digits.size() > other.digits.size() ? digits.size() : other.digits.size();
+        try
+        {
+            if (digits.size() < other.digits.size() )
+                throw "You subtracted from the larger number the smaller one";
+            for (int i = 0; i < max_len; ++i) {
 
-        //if (max_len == digits.size() && max_len == other.digits.size() && digits[max_len - 1] == other.digits[max_len - 1]) {
-         //   max_len -= 1;
-        //}
+                if (i < digits.size()) {
+                    d = digits[i]-m;
+                    m = 0;
+                }
 
-        for (int i = 0; i < max_len; ++i) {
+                if (i < other.digits.size()) {
+                    d -= other.digits[i];
+                }
 
-            if (i < digits.size()) {
-                d = digits[i]-m;
-                m = 0;
+                if (d < 0) {
+                    d += 10;
+                    m = 1;
+                }
+
+                //cout << d << endl;
+                res.digits.push_back(d);
             }
 
-            if (i < other.digits.size()) {
-                d -= other.digits[i];
-            }
-
-            if (d < 0) {
-                d += 10;
-                m = 1;
-            }
-
-            //cout << d << endl;
-            res.digits.push_back(d);
+            return res;
         }
-
-        return res;
+        catch (const char* exception)
+        {
+            std::cerr << "Error: " << exception << '\n';
+        }
+        return Lint();
     }
 
     Lint operator+(Lint other) {
@@ -126,12 +132,12 @@ public:
 
     friend ostream& operator<<(ostream &stream, Lint x);
     friend Lint Karat_mult (Lint a, Lint b);
-//    friend Karatsuba::Lint();
+   // friend class Karatsuba::Lint();
 };
 
 Lint Karat_mult (Lint a, Lint b) {
-    Lint res, a_beg, a_end, b_beg, b_end, ten_2div, ten_div;
-    int c = 0;
+    Lint res, a_beg, a_end, b_beg, b_end, prod10, prod30;
+    int c = 0, div = 0;
     int max_len = a.digits.size() > b.digits.size() ? a.digits.size() : b.digits.size();
 
     if (max_len <= 10){
@@ -140,41 +146,45 @@ Lint Karat_mult (Lint a, Lint b) {
 
     c = a.digits.size() - b.digits.size();
 
-   // if (max_len % 2 == 0 && c > 0){
-    //    for (int i = max_len - 1; i > max_len - 1 - c; --i){
-    //        b.digits[i] = 0;
-    //    }
-    //    }
-    //else if (max_len % 2 == 0 && c < 0) {
-   //     for (int i = max_len - 1; i > max_len - 1 - c; --i){
-    //        a.digits[i] = 0;
-    //    }
-    //}
+    if (max_len % 2 == 0 && c > 0){
+        for (int i = max_len -1 ; i > max_len - c - 1; --i){
+           b.digits.push_back(0);
+        }
+        div = max_len / 2;
+    }
+    else if (max_len % 2 == 0 && c < 0) {
+        for (int i = max_len - 1; i > max_len - 1 + c; --i){
+            a.digits.push_back(0);
+        }
+        div = max_len / 2;
+    }
+    else if (max_len % 2 == 0 && c == 0) {
+        div = max_len / 2;
+    }
 
-    //if (max_len % 2 != 0 && c > 0){
-    //    a.digits[max_len] = 0;
-    //    for (int i = max_len; i > max_len - c; --i){
-    //        b.digits[i] = 0;
-    //    }
-    //}
-    //else if (max_len % 2 != 0 && c < 0) {
-    //    b.digits[max_len] = 0;
-    //    for (int i = max_len; i > max_len - c; --i){
-    //        a.digits[i] = 0;
-    //    }
-   // }
-    //else if (max_len % 2 != 0 && c == 0) {
-    //    b.digits[max_len] = 0;
-    //    a.digits[max_len] = 0;
-    //}
-
-    int div = a.digits.size() / 2;
+    if (max_len % 2 != 0 && c > 0){
+        a.digits.push_back(0);
+        for (int i = max_len; i > max_len - c; --i){
+            b.digits.push_back(0);
+        }
+        div = max_len / 2 + 1;
+    }
+    else if (max_len % 2 != 0 && c < 0) {
+        b.digits.push_back(0);
+        for (int i = max_len; i > max_len + c; --i){
+            a.digits.push_back(0);
+        }
+        div = max_len / 2 + 1;
+    }
+    else if (max_len % 2 != 0 && c == 0) {
+        b.digits.push_back(0);
+        a.digits.push_back(0);
+        div = max_len / 2 + 1;
+    }
 
     for (int i = 0; i < div; ++i) {
         a_beg.digits.push_back(a.digits[i+div]);
-        //cout << a.digits[i+div] << endl;
         a_end.digits.push_back(a.digits[i]);
-        //cout << a.digits[i] << endl;
         b_beg.digits.push_back(b.digits[i+div]);
         b_end.digits.push_back(b.digits[i]);
     }
@@ -183,17 +193,21 @@ Lint Karat_mult (Lint a, Lint b) {
     Lint prod2 = Karat_mult (a_end, b_end);
     Lint prod3 = Karat_mult (a_beg + a_end, b_beg + b_end) - prod1 - prod2;
 
-    for (int i = 0; i < 2 * div-1; ++i) {
-        ten_2div.digits.push_back(0);
+    for (int i = 0; i < 2 * div; ++i) {
+        prod10.digits.push_back(0);
     }
-    ten_2div.digits.push_back(1);
-
-    for (int i = 0; i < div-1; ++i) {
-        ten_div.digits.push_back(0);
+    for (int i = 0; i < prod1.digits.size() - 1; ++i) {
+        prod10.digits.push_back(prod1.digits[i]);
     }
-    ten_div.digits.push_back(1);
 
-    res = prod1 * ten_2div + prod3 * ten_div + prod2;
+    for (int i = 0; i < div; ++i) {
+        prod30.digits.push_back(0);
+    }
+    for (int i = 0; i < prod3.digits.size() - 1; ++i) {
+        prod30.digits.push_back(prod3.digits[i]);
+    }
+
+    res = prod10 + prod30 + prod2;
 
     return res;
 }
@@ -213,27 +227,76 @@ ostream& operator<<(ostream &stream, Lint x) {
     return stream;
 }
 
-//class Karatsuba : public Multer {
-//private:
+class Karatsuba : public Multer {
+private:
+    Lint res, a_beg, a_end, b_beg, b_end, ten_2div, ten_div;
+    int c = 0, div = 0;
 
-//public:
-//    vector<int> digits;
-//    Lint multiply(digits(), other.digits) {
-//        int max_len = digits.size() > b.size() ? digits.size() : other.digits.size();
-//        if (a.size() <= 10 && b.size() <= 10){
-//            return a*b;
-//        }
-//    }
-//};
+public:
+    Lint Karat_mult(Lint a, Lint b){
+            int max_len = a.digits.size() > b.digits.size() ? a.digits.size() : b.digits.size();
 
+            if (max_len <= 1){
+                return a * b;
+            }
+
+            c = a.digits.size() - b.digits.size();
+            cout << c << endl;
+
+            if (max_len % 2 == 0 && c > 0){
+                for (int i = max_len - 1; i > max_len - c - 1; --i) {
+                    b.digits.push_back(0);
+                }
+            }
+            if (max_len % 2 == 0){
+                div = max_len / 2;
+            }
+            else{
+                div = max_len / 2 + 1;
+            }
+
+            cout << div << endl;
+
+            for (int i = 0; i < div; ++i) {
+                a_beg.digits.push_back(a.digits[i + div]);
+                cout << a.digits[i + div] << endl;
+                a_end.digits.push_back(a.digits[i]);
+                cout << a.digits[i] << endl;
+                b_beg.digits.push_back(b.digits[i + div]);
+                cout << b.digits[i + div] << endl;
+                b_end.digits.push_back(b.digits[i]);
+                cout << b.digits[i] << endl;
+            }
+
+            Lint prod1 = Karat_mult (a_beg, b_beg);
+            cout << prod1 << endl;
+            Lint prod2 = Karat_mult (a_end, b_end);
+            cout << prod2 << endl;
+            Lint prod3 = Karat_mult (a_beg + a_end, b_beg + b_end) - prod1 - prod2;
+            cout << prod3 << endl;
+
+            for (int i = 0; i < 2 * div; ++i) {
+                ten_2div.digits.push_back(0);
+            }
+            ten_2div.digits.push_back(1);
+
+            for (int i = 0; i < div; ++i) {
+                ten_div.digits.push_back(0);
+            }
+            ten_div.digits.push_back(1);
+
+            cout << ten_2div << endl;
+
+            res = prod1 * ten_2div + prod3 * ten_div + prod2;
+
+            return res;
+    }
+};
 int main() {
-    Lint a("12345678989761"), b("12300000000000"), c, d, e;
-    //a.print();
-    c = Karat_mult(a,b);
-    //c.print();
+    Lint a("23564567657888"), b("485902009"), c, d, e;
+    //c = Karat_mult(a,b);
+    c = a - b;
     cout << c << endl;
-//    b = "19";
-//    std::cin >> c;
 
 //    Lint test;
 //    test.test();
