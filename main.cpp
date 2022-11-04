@@ -2,26 +2,16 @@
 #include <vector>
 #include <math.h>
 using namespace std;
-class Multer {
-public:
-   virtual void multiply() = 0;
-};
-
-
-
-//class Strassen : public Multer {
+//class Multer {
 //public:
-//    void multiply() {
-        //...
-//    }
+//   virtual void multiply() = 0;
 //};
 
 class Lint {
 private:
-
+    vector<int> digits;
     static Multer *multer;
 public:
-    vector<int> digits;
     Lint() {
     }
 
@@ -132,7 +122,6 @@ public:
 
     friend ostream& operator<<(ostream &stream, Lint x);
     friend Lint Karat_mult (Lint a, Lint b);
-   // friend class Karatsuba::Lint();
 };
 
 Lint Karat_mult (Lint a, Lint b) {
@@ -227,75 +216,9 @@ ostream& operator<<(ostream &stream, Lint x) {
     return stream;
 }
 
-class Karatsuba : public Multer {
-private:
-    Lint res, a_beg, a_end, b_beg, b_end, ten_2div, ten_div;
-    int c = 0, div = 0;
-
-public:
-    Lint Karat_mult(Lint a, Lint b){
-            int max_len = a.digits.size() > b.digits.size() ? a.digits.size() : b.digits.size();
-
-            if (max_len <= 1){
-                return a * b;
-            }
-
-            c = a.digits.size() - b.digits.size();
-            cout << c << endl;
-
-            if (max_len % 2 == 0 && c > 0){
-                for (int i = max_len - 1; i > max_len - c - 1; --i) {
-                    b.digits.push_back(0);
-                }
-            }
-            if (max_len % 2 == 0){
-                div = max_len / 2;
-            }
-            else{
-                div = max_len / 2 + 1;
-            }
-
-            cout << div << endl;
-
-            for (int i = 0; i < div; ++i) {
-                a_beg.digits.push_back(a.digits[i + div]);
-                cout << a.digits[i + div] << endl;
-                a_end.digits.push_back(a.digits[i]);
-                cout << a.digits[i] << endl;
-                b_beg.digits.push_back(b.digits[i + div]);
-                cout << b.digits[i + div] << endl;
-                b_end.digits.push_back(b.digits[i]);
-                cout << b.digits[i] << endl;
-            }
-
-            Lint prod1 = Karat_mult (a_beg, b_beg);
-            cout << prod1 << endl;
-            Lint prod2 = Karat_mult (a_end, b_end);
-            cout << prod2 << endl;
-            Lint prod3 = Karat_mult (a_beg + a_end, b_beg + b_end) - prod1 - prod2;
-            cout << prod3 << endl;
-
-            for (int i = 0; i < 2 * div; ++i) {
-                ten_2div.digits.push_back(0);
-            }
-            ten_2div.digits.push_back(1);
-
-            for (int i = 0; i < div; ++i) {
-                ten_div.digits.push_back(0);
-            }
-            ten_div.digits.push_back(1);
-
-            cout << ten_2div << endl;
-
-            res = prod1 * ten_2div + prod3 * ten_div + prod2;
-
-            return res;
-    }
-};
 int main() {
     Lint a("23564567657888"), b("485902009"), c, d, e;
-    //c = Karat_mult(a,b);
-    c = a - b;
+    c = Karat_mult(a,b);
     cout << c << endl;
 
 //    Lint test;
@@ -306,7 +229,6 @@ int main() {
 
 //    Lint::setMultMode(new Karatsuba());
 
-//    std::cout << a * (b + c) << std::endl;
 
     return 0;
 
